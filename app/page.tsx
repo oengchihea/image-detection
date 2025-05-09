@@ -1,19 +1,18 @@
 "use client"
 
 import type React from "react"
-import { useState, useRef, useEffect } from "react"
-import { Upload, Info, AlertCircle, Layers } from "lucide-react"
 
-// Import UI components directly without using path aliases or relative paths
-const Button = require("../../components/ui/button").Button
-const Card = require("../../components/ui/card").Card
-const Progress = require("../../components/ui/progress").Progress
-const { Tabs, TabsContent, TabsList, TabsTrigger } = require("../../components/ui/tabs")
-const { Accordion, AccordionContent, AccordionItem, AccordionTrigger } = require("../../components/ui/accordion")
-const { Alert, AlertDescription, AlertTitle } = require("../../components/ui/alert")
-const Switch = require("../../components/ui/switch").Switch
-const Label = require("../../components/ui/label").Label
-const DetectionResult = require("../../components/detection-result").default
+import { useState, useRef, useEffect } from "react"
+import { Upload, Info, AlertCircle, Layers } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import DetectionResult from "@/components/detection-result"
 
 type DetectionResultType = {
   isReal: boolean

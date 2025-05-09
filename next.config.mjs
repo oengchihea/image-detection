@@ -9,14 +9,12 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Add these experimental options to help with module resolution
+  // Modify the experimental options to use 'loose' instead of true
   experimental: {
     esmExternals: 'loose',
   },
   // Add webpack configuration to help with module resolution
   webpack: (config) => {
-    config.resolve.fallback = { fs: false, path: false };
-    
     // Add this to help with module resolution
     config.resolve.modules = ['node_modules', '.'];
     

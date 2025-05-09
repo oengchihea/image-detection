@@ -1,4 +1,4 @@
-// Create a barrel file to export all UI components
+// Barrel file to export all UI components
 export * from "./button"
 export * from "./card"
 export * from "./progress"
