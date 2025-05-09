@@ -9,16 +9,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Add these experimental options
+  // Add these experimental options to help with module resolution
   experimental: {
     esmExternals: 'loose',
-    serverComponentsExternalPackages: [],
-  },
-  // This can help with path resolution
-  webpack: (config) => {
-    config.resolve.fallback = { fs: false, path: false };
-    return config;
-  },
+  }
 }
 
 export default nextConfig

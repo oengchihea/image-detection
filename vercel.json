@@ -4,6 +4,7 @@
   "installCommand": "npm install --legacy-peer-deps",
   "framework": "nextjs",
   "env": {
-    "SHARP_IGNORE_GLOBAL_LIBVIPS": "true"
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "NODE_OPTIONS": "--max-old-space-size=4096"
   }
 }
