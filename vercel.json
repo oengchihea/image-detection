@@ -3,7 +3,7 @@
   "buildCommand": "npm install --legacy-peer-deps && npm run build",
   "installCommand": "npm install --legacy-peer-deps",
   "framework": "nextjs",
-  "environmentVariables": {
+  "env": {
     "SHARP_IGNORE_GLOBAL_LIBVIPS": "true"
   }
 }
