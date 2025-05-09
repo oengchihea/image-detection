@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
+  // Removed the experimental.esmExternals option as it's causing issues
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -9,15 +11,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Modify the experimental options to use 'loose' instead of true
-  experimental: {
-    esmExternals: 'loose',
-  },
-  // Add webpack configuration to help with module resolution
+  // Added module resolution configuration
   webpack: (config) => {
     // Add this to help with module resolution
     config.resolve.modules = ['node_modules', '.'];
-    
     return config;
   },
 }
