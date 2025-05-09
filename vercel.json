@@ -1,16 +1,9 @@
-@"
 {
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next",
-      "config": {
-        "installCommand": "npm install --legacy-peer-deps --platform=linux --arch=x64 sharp"
-      }
-    }
-  ],
-  "env": {
-    "SHARP_IGNORE_GLOBAL_LIBVIPS": "1"
+  "version": 2,
+  "buildCommand": "npm install --legacy-peer-deps && npm run build",
+  "installCommand": "npm install --legacy-peer-deps",
+  "framework": "nextjs",
+  "environmentVariables": {
+    "SHARP_IGNORE_GLOBAL_LIBVIPS": "true"
   }
 }
-"@ | Out-File -FilePath vercel.json -Encoding utf8
