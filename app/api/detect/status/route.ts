@@ -5,7 +5,14 @@ export async function GET() {
     console.log("Checking backend status...")
 
     // Try multiple URLs to connect to the Flask backend
-    const urls = ["http://localhost:5000/health", "http://127.0.0.1:5000/health"]
+    const urls = [
+      "http://localhost:5000/health",
+      "http://127.0.0.1:5000/health",
+      "http://localhost:5000/",
+      "http://127.0.0.1:5000/",
+      "http://localhost:5000/api/detect",
+      "http://127.0.0.1:5000/api/detect",
+    ]
 
     let connected = false
     let responseData = null
@@ -16,10 +23,10 @@ export async function GET() {
       try {
         console.log(`Trying to connect to: ${url}`)
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 2000) // 2 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 3000) // 3 second timeout
 
         const response = await fetch(url, {
-          method: "GET",
+          method: url.includes("/api/detect") ? "OPTIONS" : "GET", // Use OPTIONS for API endpoint
           cache: "no-store",
           signal: controller.signal,
           headers: {
@@ -30,17 +37,30 @@ export async function GET() {
 
         clearTimeout(timeoutId)
 
-        if (response.ok) {
+        if (response.ok || response.status === 204) {
+          // 204 is common for OPTIONS
           connected = true
-          responseData = await response.json()
+          try {
+            responseData = await response.json()
+          } catch (e) {
+            // Some endpoints might not return JSON
+            responseData = { message: "Backend is online" }
+          }
           console.log(`Successfully connected to ${url}`)
-          console.log("Response:", responseData)
           break
         } else {
           errorDetails.push(`${url}: Status ${response.status}`)
         }
       } catch (err) {
-        errorDetails.push(`${url}: ${err instanceof Error ? err.message : String(err)}`)
+        const errorMessage = err instanceof Error ? err.message : String(err)
+        errorDetails.push(`${url}: ${errorMessage}`)
+
+        // Add more detailed logging
+        if (err instanceof TypeError && errorMessage.includes("Failed to fetch")) {
+          console.error(`Network error for ${url}: Make sure the Flask server is running and accessible`)
+        } else if (err instanceof DOMException && errorMessage.includes("abort")) {
+          console.error(`Request timed out for ${url}: The server took too long to respond`)
+        }
       }
     }
 
@@ -53,6 +73,7 @@ export async function GET() {
           status: "offline",
           error: "Backend service unavailable",
           details: errorDetails,
+          message: "Please make sure the Flask backend server is running on port 5000",
         },
         { status: 503 },
       )
@@ -63,6 +84,7 @@ export async function GET() {
       {
         status: "offline",
         error: `Cannot connect to backend service: ${error instanceof Error ? error.message : String(error)}`,
+        message: "Please make sure the Flask backend server is running on port 5000",
       },
       { status: 503 },
     )

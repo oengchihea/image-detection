@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Upload, Info, AlertCircle, Layers } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -10,7 +10,9 @@ import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import DetectionResultComponent from "@/components/detection-result"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import DetectionResult from "@/components/detection-result"
 
 type DetectionResultType = {
   isReal: boolean
@@ -20,12 +22,18 @@ type DetectionResultType = {
     modelResults?: any[]
     detectedArtifacts: string[]
     naturalElements?: string[]
-    detectedSubject?: string
+    detectedSubject?: string | null
     humanDetected?: boolean
     realWorldIndicators?: string[]
     reason?: string
     brandDetected?: string[]
     landscapeFeatures?: string[]
+    enhancedAnalysis?: {
+      backendResult?: {
+        heatmap_url?: string
+        frequency_analysis?: string
+      }
+    }
   }
 }
 
@@ -39,6 +47,7 @@ export default function Home() {
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [backendStatus, setBackendStatus] = useState<"unknown" | "online" | "offline">("unknown")
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Check backend status on component mount
   useEffect(() => {
@@ -149,6 +158,8 @@ export default function Home() {
     try {
       const formData = new FormData()
       formData.append("file", file)
+      // Pass the advanced mode setting to the API
+      formData.append("use_enhanced", advancedMode.toString())
 
       const response = await fetch("/api/detect", {
         method: "POST",
@@ -183,8 +194,10 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-4 md:p-24 bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-4xl w-full">
+    <main className="container mx-auto p-4 flex flex-col items-center">
+      <h1 className="text-3xl font-bold mb-6 text-center w-full">AI Image Detector</h1>
+
+      <div className="max-w-4xl w-full mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2 dark:text-white">Enhanced DeepFake Detector</h1>
           <p className="text-gray-600 dark:text-gray-300">
@@ -235,6 +248,10 @@ export default function Home() {
                   </p>
                 </div>
               )}
+              <div className="mt-4 flex items-center space-x-2">
+                <Switch id="enhanced-mode" checked={advancedMode} onCheckedChange={setAdvancedMode} />
+                <Label htmlFor="enhanced-mode">Enhanced Detection</Label>
+              </div>
             </Card>
           </TabsContent>
           <TabsContent value="video" className="mt-4">
@@ -270,7 +287,7 @@ export default function Home() {
           {!file && (
             <div
               className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-12 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
-              onClick={() => document.getElementById("file-upload")?.click()}
+              onClick={() => fileInputRef.current?.click()}
             >
               <Upload className="mx-auto h-12 w-12 text-gray-400" />
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Click to upload or drag and drop</p>
@@ -284,6 +301,7 @@ export default function Home() {
                 className="sr-only"
                 accept={activeTab === "image" ? "image/*" : "video/*"}
                 onChange={handleFileChange}
+                ref={fileInputRef}
               />
             </div>
           )}
@@ -323,7 +341,7 @@ export default function Home() {
 
         {result && (
           <div className="mt-8">
-            <DetectionResultComponent
+            <DetectionResult
               isReal={result.isReal}
               confidence={result.confidence}
               processingTime={result.processingTime || 0}
@@ -339,6 +357,44 @@ export default function Home() {
               }}
             />
 
+            {result && result.analysisDetails?.enhancedAnalysis?.backendResult?.heatmap_url && (
+              <div className="mt-6">
+                <Card className="p-6">
+                  <h2 className="text-xl font-semibold mb-4 dark:text-white">Manipulation Heatmap</h2>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">
+                    Areas highlighted in red/yellow indicate potential manipulation or AI-generated features.
+                  </p>
+                  <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+                    <img
+                      src={result.analysisDetails.enhancedAnalysis.backendResult.heatmap_url || "/placeholder.svg"}
+                      alt="Manipulation heatmap"
+                      className="w-full h-auto"
+                    />
+                  </div>
+                </Card>
+              </div>
+            )}
+
+            {result && result.analysisDetails?.enhancedAnalysis?.backendResult?.frequency_analysis && (
+              <div className="mt-6">
+                <Card className="p-6">
+                  <h2 className="text-xl font-semibold mb-4 dark:text-white">Frequency Domain Analysis</h2>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">
+                    Frequency analysis can reveal patterns invisible to the human eye that indicate AI generation.
+                  </p>
+                  <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+                    <img
+                      src={
+                        result.analysisDetails.enhancedAnalysis.backendResult.frequency_analysis || "/placeholder.svg"
+                      }
+                      alt="Frequency domain analysis"
+                      className="w-full h-auto"
+                    />
+                  </div>
+                </Card>
+              </div>
+            )}
+
             <Accordion type="single" collapsible className="mt-6">
               <AccordionItem value="how-it-works">
                 <AccordionTrigger className="text-sm font-medium">How it works</AccordionTrigger>
@@ -346,6 +402,8 @@ export default function Home() {
                   <div className="text-sm text-gray-600 dark:text-gray-300 space-y-2">
                     <p>This detector uses multiple advanced analysis techniques:</p>
                     <ul className="list-disc pl-5 space-y-1">
+                      <li>Ensemble model approach combining multiple specialized detectors</li>
+                      <li>Frequency domain analysis to detect GAN artifacts invisible to the human eye</li>
                       <li>Enhanced natural image recognition for real photographs</li>
                       <li>Advanced pattern analysis for AI-generated content</li>
                       <li>Facial feature analysis for human subjects</li>
@@ -354,6 +412,9 @@ export default function Home() {
                       <li>Metadata analysis for photographic indicators</li>
                       <li>Brand logo detection for authentic photographs</li>
                       <li>Natural landscape feature recognition</li>
+                      <li>Improved facial asymmetry detection for real humans</li>
+                      <li>Enhanced lighting and background analysis</li>
+                      <li>Manipulation heatmap visualization of potentially altered regions</li>
                     </ul>
                     <p>
                       The system combines these approaches to accurately distinguish between real images and
