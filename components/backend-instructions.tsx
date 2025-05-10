@@ -3,9 +3,9 @@
 import { useState } from "react"
 import { Info, Terminal, Copy, Check } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card } from "@/components/ui/card"
+import { Button } from "@/components/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/tabs"
+import { Card } from "@/components/card"
 
 export function BackendInstructions() {
   const [copied, setCopied] = useState(false)
