@@ -2,8 +2,8 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Progress } from "@/components/progress"
-import { CheckCircle, AlertCircle, Clock, Info, User, ImageIcon } from 'lucide-react'
+import { Progress } from "@/components/ui/progress"
+import { CheckCircle, AlertCircle, Clock, Info, User, ImageIcon } from "lucide-react"
 import { useState } from "react"
 
 interface DetectionResultProps {
@@ -23,8 +23,15 @@ interface DetectionResultProps {
       backendResult?: {
         heatmap_url?: string
         frequency_analysis?: string
+        model_results?: any[]
+        frequency_features?: {
+          low_to_high_ratio: number
+          mid_to_high_ratio: number
+          filtered_std: number
+        }
       }
     }
+    aiIndicators?: string[]
   }
 }
 
