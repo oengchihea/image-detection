@@ -1,7 +1,7 @@
-import { classifyImage } from "@/lib/advanced-image-classifier"
-import { analyzeHumanFace, detectNaturalImage } from "@/lib/natural-image-detection"
-import { detectRealHumanFace } from "@/lib/human-face-detection"
-import { detectAIGeneratedImage } from "@/lib/ai-generation-detection"
+import { classifyImage } from "../../../lib/advanced-image-classifier"
+import { analyzeHumanFace, detectNaturalImage } from "../../../lib/natural-image-detection"
+import { detectRealHumanFace } from "../../../lib/human-face-detection"
+import { detectAIGeneratedImage } from "../../../lib/ai-generation-detection"
 
 // Enhanced detection constants with balanced weights
 const ENHANCED_CLASSIFIER_WEIGHTS = {
@@ -1386,6 +1386,3 @@ function processFrequencyAnalysis(backendResult: any) {
     features: frequencyFeatures,
   }
 }
-
-
-
