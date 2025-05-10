@@ -18,9 +18,11 @@ const nextConfig = {
     config.resolve.modules = ['node_modules', '.'];
     
     // Force TypeScript to be resolved from node_modules
+    // Using path mapping instead of require.resolve
     config.resolve.alias = {
       ...config.resolve.alias,
-      typescript: require.resolve('typescript'),
+      // Don't use require.resolve in ESM
+      typescript: './node_modules/typescript/lib/typescript.js',
     };
     
     return config;
